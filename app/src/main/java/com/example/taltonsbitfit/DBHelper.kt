@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 
 class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
@@ -29,8 +30,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         values.put(FOOD, foodName)
         values.put(CALORIE, calorieCount)
-
         val db = this.writableDatabase
+        Log.i("DB_VAL", values.toString())
 
         db.insert(TABLE_NAME, null, values)
         db.close()
@@ -49,7 +50,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val TABLE_NAME = "calorie_table"
 
         val ID = "id"
-        val FOOD = "food name"
-        val CALORIE = "calorie count"
+        val FOOD = "food_name"
+        val CALORIE = "calorie_count"
     }
 }

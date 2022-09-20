@@ -1,6 +1,9 @@
 package com.example.taltonsbitfit
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.*
@@ -8,34 +11,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("Range")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val listData = ArrayList<Model>()
+        val db = DBHelper(this, null)
         val rView = findViewById<RecyclerView>(R.id.recyclerView)
         rView.layoutManager = LinearLayoutManager(this)
 
-        // input needed vars
-        val addItem = findViewById<Button>(R.id.food_input)
-        val foodET = findViewById<EditText>(R.id.food_ET)
-        val calET = findViewById<EditText>(R.id.cal_ET)
-        // food and cal on click listener
-        addItem.setOnClickListener{
-            val db = DBHelper(this, null)
-            val foodName = foodET.text.toString()
-            val calCount = calET.text.toString()
-
-            db.addFood(foodName, calCount)
-            Toast.makeText(this, "$foodName & $calCount Added To Database", Toast.LENGTH_LONG).show()
+        val addFoodBtn:Button = findViewById(R.id.food_input)
 
             val cursor = db.getFood()
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     listData.add(
                         Model(
-                            cursor.getString(0),
-                            cursor.getInt(1)
+                            cursor.getString(cursor.getColumnIndex("food_name")),
+                        cursor.getInt(cursor.getColumnIndex("calorie_count"))
                         )
                     )
                     val adapter = RVAdapter(listData)
@@ -43,9 +37,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+        addFoodBtn.setOnClickListener{
+            val intent = Intent(this, UserInputActivity::class.java)
+            startActivity(intent)
+        }
 
-            foodET.text.clear()
-            calET.text.clear()
         }
     }
-}
